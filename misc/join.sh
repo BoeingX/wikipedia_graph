@@ -9,12 +9,16 @@ file2=$2
 awk -v FS='\t' -v OFS='\t'\
     '{
         if(FNR==NR){
-            dict[$2] = $1;
+            d1[$1] = 1;
+            d2[$2] = $1;
             next;
         }
         else{
-            tmp = dict[$2];
-            if(tmp != "")
-                print $1, dict[$2];
+            tmp = d1[$1];
+            if(tmp != ""){
+                tmp = d2[$2];
+                if(tmp != "")
+                    print $1, tmp;
+            }
         }
     }' $file1 $file2
