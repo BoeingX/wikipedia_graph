@@ -7,6 +7,8 @@ from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from py2neo import authenticate, Graph
+from datetime import timedelta
+from flask import session, app
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -35,6 +37,12 @@ class NameForm(Form):
     name = StringField('Root page (e.g. Hidden_Markov_model)?', validators=[Required()])
     submit = SubmitField('Submit')
 
+#@app.before_request
+#def make_session_permanent():
+#    session.permanent = True
+#    app.permanent_session_lifetime = timedelta(seconds = 10)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -46,8 +54,7 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET'])
 def index():
-    nodes = get_neighbors(graph)
-    return render_template('index.html', nodes = nodes)
+    return render_template('index.html')
 
 @app.route('/neighbors', methods=['GET', 'POST'])
 def neighbors():
@@ -65,10 +72,10 @@ def neighbors():
             return redirect(url_for('neighbors_result'))
     return render_template('neighbors.html', form = form)
 
-@app.route('/neighbors_result', methods=['GET'])
+@app.route('/neighbors_result')
 def neighbors_result():
-    root = session['root']
-    neighbors = session['neighbors']
+    root = session.get('root')
+    neighbors = session.get('neighbors')
     return render_template('neighbors_result.html', root = root, neighbors = neighbors)
 
 if __name__ == '__main__':
