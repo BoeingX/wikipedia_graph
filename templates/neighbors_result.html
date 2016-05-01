@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "macros.html" as macros %}
+
+{% block title %}Wikigraph{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <div class="jumbotron">
+        <h2>{{macros.wiki_external_link(root)}}</h2>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Neighbors</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for neighbor in neighbors %}
+        <tr>
+            <td><a href="{{ ''.join(['https://en.wikipedia.org/wiki/', neighbor]) }}">{{ neighbor }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

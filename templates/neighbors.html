@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "macros.html" as macros %}
+
+{% block title %}Wikigraph{% endblock %}
+{% block page_content %}
+{{ wtf.quick_form(form) }}
+{% endblock %}
