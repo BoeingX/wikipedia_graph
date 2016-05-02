@@ -1,0 +1,106 @@
+Requirement already satisfied (use --upgrade to upgrade): flask in ./venv/lib/python2.7/site-packages
+Collecting itsdangerous>=0.21 (from flask)
+Collecting Werkzeug>=0.7 (from flask)
+  Using cached Werkzeug-0.11.9-py2.py3-none-any.whl
+Collecting Jinja2>=2.4 (from flask)
+  Using cached Jinja2-2.8-py2.py3-none-any.whl
+Collecting MarkupSafe (from Jinja2>=2.4->flask)
+Installing collected packages: itsdangerous, Werkzeug, MarkupSafe, Jinja2
+Successfully installed Jinja2-2.8 MarkupSafe-0.23 Werkzeug-0.11.9 itsdangerous-0.24
+Collecting py2neo
+Installing collected packages: py2neo
+Successfully installed py2neo-2.0.8
+Collecting flask-script
+  Downloading Flask-Script-2.0.5.tar.gz (42kB)
+Requirement already satisfied (use --upgrade to upgrade): Flask in ./venv/lib/python2.7/site-packages (from flask-script)
+Requirement already satisfied (use --upgrade to upgrade): itsdangerous>=0.21 in ./venv/lib/python2.7/site-packages (from Flask->flask-script)
+Requirement already satisfied (use --upgrade to upgrade): Werkzeug>=0.7 in ./venv/lib/python2.7/site-packages (from Flask->flask-script)
+Requirement already satisfied (use --upgrade to upgrade): Jinja2>=2.4 in ./venv/lib/python2.7/site-packages (from Flask->flask-script)
+Requirement already satisfied (use --upgrade to upgrade): MarkupSafe in ./venv/lib/python2.7/site-packages (from Jinja2>=2.4->Flask->flask-script)
+Building wheels for collected packages: flask-script
+  Running setup.py bdist_wheel for flask-script: started
+  Running setup.py bdist_wheel for flask-script: finished with status 'done'
+  Stored in directory: /home/bysong/.cache/pip/wheels/e2/ea/d8/8d114e46cef819f7d9879504a7f9cb2a88a479af2858223d9f
+Successfully built flask-script
+Installing collected packages: flask-script
+Successfully installed flask-script-2.0.5
+Collecting flask-bootstrap
+  Downloading Flask-Bootstrap-3.3.5.7.tar.gz (451kB)
+Requirement already satisfied (use --upgrade to upgrade): Flask>=0.8 in ./venv/lib/python2.7/site-packages (from flask-bootstrap)
+Collecting dominate (from flask-bootstrap)
+  Downloading dominate-2.2.0.zip
+Collecting visitor (from flask-bootstrap)
+  Downloading visitor-0.1.2.tar.gz
+Requirement already satisfied (use --upgrade to upgrade): itsdangerous>=0.21 in ./venv/lib/python2.7/site-packages (from Flask>=0.8->flask-bootstrap)
+Requirement already satisfied (use --upgrade to upgrade): Werkzeug>=0.7 in ./venv/lib/python2.7/site-packages (from Flask>=0.8->flask-bootstrap)
+Requirement already satisfied (use --upgrade to upgrade): Jinja2>=2.4 in ./venv/lib/python2.7/site-packages (from Flask>=0.8->flask-bootstrap)
+Requirement already satisfied (use --upgrade to upgrade): MarkupSafe in ./venv/lib/python2.7/site-packages (from Jinja2>=2.4->Flask>=0.8->flask-bootstrap)
+Building wheels for collected packages: flask-bootstrap, dominate, visitor
+  Running setup.py bdist_wheel for flask-bootstrap: started
+  Running setup.py bdist_wheel for flask-bootstrap: finished with status 'done'
+  Stored in directory: /home/bysong/.cache/pip/wheels/30/42/27/67ee7832eead494067ce261c6a99e3cd319861efc905851829
+  Running setup.py bdist_wheel for dominate: started
+  Running setup.py bdist_wheel for dominate: finished with status 'done'
+  Stored in directory: /home/bysong/.cache/pip/wheels/a8/cf/f9/f1575df1ba08556a4b74ab1f6b54303a2f9539ddccb1c6aff5
+  Running setup.py bdist_wheel for visitor: started
+  Running setup.py bdist_wheel for visitor: finished with status 'done'
+  Stored in directory: /home/bysong/.cache/pip/wheels/4d/c8/a9/a66705367c612204a5b55c62798b514541be5a072fa2027009
+Successfully built flask-bootstrap dominate visitor
+Installing collected packages: dominate, visitor, flask-bootstrap
+Successfully installed dominate-2.2.0 flask-bootstrap-3.3.5.7 visitor-0.1.2
+Collecting flask-moment
+  Downloading Flask-Moment-0.5.1.tar.gz
+Requirement already satisfied (use --upgrade to upgrade): Flask in ./venv/lib/python2.7/site-packages (from flask-moment)
+Requirement already satisfied (use --upgrade to upgrade): itsdangerous>=0.21 in ./venv/lib/python2.7/site-packages (from Flask->flask-moment)
+Requirement already satisfied (use --upgrade to upgrade): Werkzeug>=0.7 in ./venv/lib/python2.7/site-packages (from Flask->flask-moment)
+Requirement already satisfied (use --upgrade to upgrade): Jinja2>=2.4 in ./venv/lib/python2.7/site-packages (from Flask->flask-moment)
+Requirement already satisfied (use --upgrade to upgrade): MarkupSafe in ./venv/lib/python2.7/site-packages (from Jinja2>=2.4->Flask->flask-moment)
+Building wheels for collected packages: flask-moment
+  Running setup.py bdist_wheel for flask-moment: started
+  Running setup.py bdist_wheel for flask-moment: finished with status 'done'
+  Stored in directory: /home/bysong/.cache/pip/wheels/24/f7/ad/3b7aeb286c374c414dcc350b892cf8998e3294c88472526cb3
+Successfully built flask-moment
+Installing collected packages: flask-moment
+Successfully installed flask-moment-0.5.1
+Collecting flask-wtf
+  Downloading Flask_WTF-0.12-py2-none-any.whl
+Requirement already satisfied (use --upgrade to upgrade): Werkzeug in ./venv/lib/python2.7/site-packages (from flask-wtf)
+Requirement already satisfied (use --upgrade to upgrade): Flask in ./venv/lib/python2.7/site-packages (from flask-wtf)
+Collecting WTForms (from flask-wtf)
+  Downloading WTForms-2.1.zip (553kB)
+Requirement already satisfied (use --upgrade to upgrade): itsdangerous>=0.21 in ./venv/lib/python2.7/site-packages (from Flask->flask-wtf)
+Requirement already satisfied (use --upgrade to upgrade): Jinja2>=2.4 in ./venv/lib/python2.7/site-packages (from Flask->flask-wtf)
+Requirement already satisfied (use --upgrade to upgrade): MarkupSafe in ./venv/lib/python2.7/site-packages (from Jinja2>=2.4->Flask->flask-wtf)
+Building wheels for collected packages: WTForms
+  Running setup.py bdist_wheel for WTForms: started
+  Running setup.py bdist_wheel for WTForms: finished with status 'done'
+  Stored in directory: /home/bysong/.cache/pip/wheels/36/35/f3/7452cd24daeeaa5ec5b2ea13755316abc94e4e7702de29ba94
+Successfully built WTForms
+Installing collected packages: WTForms, flask-wtf
+Successfully installed WTForms-2.1 flask-wtf-0.12
+Collecting ipython
+  Using cached ipython-4.2.0-py2-none-any.whl
+Collecting traitlets (from ipython)
+  Using cached traitlets-4.2.1-py2.py3-none-any.whl
+Collecting pickleshare (from ipython)
+  Using cached pickleshare-0.7.2-py2.py3-none-any.whl
+Collecting simplegeneric>0.8 (from ipython)
+Collecting backports.shutil-get-terminal-size (from ipython)
+  Using cached backports.shutil_get_terminal_size-1.0.0-py2.py3-none-any.whl
+Collecting decorator (from ipython)
+  Using cached decorator-4.0.9-py2.py3-none-any.whl
+Requirement already satisfied (use --upgrade to upgrade): setuptools>=18.5 in ./venv/lib/python2.7/site-packages (from ipython)
+Collecting pexpect (from ipython)
+Collecting ipython-genutils (from traitlets->ipython)
+  Using cached ipython_genutils-0.1.0-py2.py3-none-any.whl
+Collecting pathlib2 (from pickleshare->ipython)
+  Using cached pathlib2-2.1.0-py2.py3-none-any.whl
+Collecting ptyprocess>=0.5 (from pexpect->ipython)
+  Using cached ptyprocess-0.5.1-py2.py3-none-any.whl
+Collecting six (from pathlib2->pickleshare->ipython)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: decorator, ipython-genutils, traitlets, six, pathlib2, pickleshare, simplegeneric, backports.shutil-get-terminal-size, ptyprocess, pexpect, ipython
+Successfully installed backports.shutil-get-terminal-size-1.0.0 decorator-4.0.9 ipython-4.2.0 ipython-genutils-0.1.0 pathlib2-2.1.0 pexpect-4.0.1 pickleshare-0.7.2 ptyprocess-0.5.1 simplegeneric-0.8.1 six-1.10.0 traitlets-4.2.1
+Collecting uwsgi
+Installing collected packages: uwsgi
+Successfully installed uwsgi-2.0.12
