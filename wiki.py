@@ -36,18 +36,13 @@ def get_path(graph, name1, name2, depth = 5):
     return result
 
 class NameForm(Form):
-    name = StringField('Root page (e.g. Hidden Markov model)?', validators=[Required()])
-    submit = SubmitField('Submit')
-
-class PathForm(Form):
     name1 = StringField('First page (e.g. Hidden Markov model)?', validators=[Required()])
-    name2 = StringField('First page (e.g. Support vector machine)?', validators=[Required()])
+    name2 = StringField('Second page (e.g. Support vector machine)?', validators = [])
     submit = SubmitField('Submit')
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
-
 
 @app.errorhandler(500)
 def internal_server_error(e):
@@ -60,26 +55,43 @@ def index():
 @app.route('/neighbors', methods=['GET', 'POST'])
 def neighbors():
     form = NameForm()
-    nodes = get_neighbors(graph)
     if form.validate_on_submit():
-        name = re.sub(' ', '_', form.name.data)
-        neighbors = get_neighbors(graph, name).records
-        if len(neighbors) == 0:
-            flash(Markup('Root node not found!'))
-            return redirect(url_for('neighbors'))
+        name1 = re.sub(' ', '_', form.name1.data)
+        name2 = re.sub(' ', '_', form.name2.data)
+        if name2 == '':
+            neighbors = get_neighbors(graph, name1).records
+            if len(neighbors) == 0:
+                flash(Markup('Root node not found!'))
+                return redirect(url_for('neighbors'))
+            else:
+                session['is_neighbors'] = True
+                session['root'] = neighbors[0].root
+                session['neighbors'] = [neighbor.name for neighbor in neighbors]
+                return redirect(url_for('neighbors_result'))
         else:
-            session['root'] = neighbors[0].root
-            session['neighbors'] = [neighbor.name for neighbor in neighbors]
-            return redirect(url_for('neighbors_result'))
+            path = get_path(graph, name1, name2).records
+            if len(path) == 0:
+                flash(Markup('Path not found!'))
+                return redirect(url_for('neighbors'))
+            else:
+                session['is_neighbors'] = False
+                session['path'] = [node['name'] for node in path[0].path.nodes]
+                return redirect(url_for('neighbors_result'))
     return render_template('neighbors.html', form = form)
 
 @app.route('/neighbors_result')
 def neighbors_result():
+    is_neighbors = session.get('is_neighbors')
     root = session.get('root')
     neighbors = session.get('neighbors')
-    if root is None or neighbors is None:
-        return render_template('404.html'), 404
-    return render_template('neighbors_result.html', root = root, neighbors = neighbors)
+    path = session.get('path')
+    if is_neighbors:
+        if root is None or neighbors is None:
+            return render_template('404.html'), 404
+    else:
+        if path is None:
+            return render_template('404.html'), 404
+    return render_template('neighbors_result.html', is_neighbors = is_neighbors, root = root, neighbors = neighbors, path = path)
 
 @app.route('/path', methods=['GET', 'POST'])
 def path():

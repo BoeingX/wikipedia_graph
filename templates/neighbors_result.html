@@ -7,21 +7,37 @@
 {% block page_content %}
 <div class="container">
     <div class="jumbotron">
-        <h2>{{macros.wiki_external_link(root)}}</h2>
+        {% if is_neighbors %}
+            <h2>{{macros.wiki_external_link(root)}}</h2>
+        {% else %}
+        <h2>{{macros.wiki_external_link(path[0])}} &#8594; {{macros.wiki_external_link(path[-1])}} </h2>
+        {% endif %}
     </div>
 </div>
 <table class="table">
     <thead>
         <tr>
-            <th>Neighbors</th>
+            {% if is_neighbors %}
+                <th>Neighbors</th>
+            {% else %}
+                <th>One Shortest Path</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
+        {% if is_neighbors %}
         {% for neighbor in neighbors %}
         <tr>
             <td><a href="{{ ''.join(['https://en.wikipedia.org/wiki/', neighbor]) }}">{{ neighbor }}</a></td>
         </tr>
         {% endfor %}
+        {% else %}
+        {% for node in path %}
+        <tr>
+            <td><a href="{{ ''.join(['https://en.wikipedia.org/wiki/', node]) }}">{{ node }}</a></td>
+        </tr>
+        {% endfor %}
+        {% endif %}
     </tbody>
 </table>
 {% endblock %}
