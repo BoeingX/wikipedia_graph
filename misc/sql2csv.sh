@@ -27,4 +27,5 @@ sed -n '/INSERT INTO `.*` VALUES /p' $file \
          }
      }
     }'\
-    | sed -r "s/'//g;s/\a/\\\'/g"
+    | sed "s/\t'/\t/;s/'$//;s/\a/'/g" \
+    | sed 's/\\\"//g'
