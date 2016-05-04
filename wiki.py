@@ -116,6 +116,9 @@ def path():
             return redirect(url_for('index'))
     return render_template('neighbors.html', form = form)
 
+@app.route('/d3', methods = ['GET'])
+def d3():
+    return render_template('d3.html')
 
 if __name__ == '__main__':
     manager.run()
