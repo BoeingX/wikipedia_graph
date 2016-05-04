@@ -1,8 +1,24 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "macros.html" as macros %}
-
 {% block title %}Wikigraph{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+$(function() {
+    $(".form-control").autocomplete({
+        source:function(request, response) {
+            $.get("{{url_for('autocomplete')}}",{
+                query: request.term 
+            }, function(data) {
+                response(data.json_list); 
+            });
+        },
+        minLength: 3
+    });
+})
+</script>
+{% endblock %}
 {% block page_content %}
-{{ wtf.quick_form(form) }}
+{{wtf.quick_form(form)}}
 {% endblock %}

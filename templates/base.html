@@ -6,6 +6,7 @@
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 {% endblock %}
 
 {% block navbar %}
@@ -45,4 +46,5 @@
 {% block scripts %}
 {{ super() }}
 {{ moment.include_moment() }}
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 {% endblock %}

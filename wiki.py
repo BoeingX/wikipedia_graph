@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, session, redirect, url_for, flash, Markup
+from flask import Flask, render_template, session, redirect, url_for, flash, Markup, jsonify, session, app, request
 from flask.ext.script import Manager, Shell
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
@@ -8,21 +8,31 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from py2neo import authenticate, Graph
 from datetime import timedelta
-from flask import session, app
 import re
+from flask_bootstrap import WebCDN
+from flask_bootstrap import StaticCDN
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
-
 manager = Manager(app)
 bootstrap = Bootstrap(app)
+app.extensions['bootstrap']['cdns']['jquery'] = StaticCDN()
 moment = Moment(app)
 
 neo4j_user = os.environ.get('NEO4J_USER') or 'neo4j'
 neo4j_pass = os.environ.get('NEO4J_PASS') or 'neo4j'
 authenticate("localhost:7474", neo4j_user, neo4j_pass)
 graph = Graph()
+
+
+@app.route('/autocomplete',methods=['GET'])
+def autocomplete():
+    search = request.args.get('query')
+    search = re.sub(' +', '_', search)
+    match = graph.cypher.execute("MATCH (p:Article) WHERE p.name =~ '(?i)%s.*' RETURN p.name as name LIMIT 5" % search).records
+    match = [node.name for node in match] if len(match) > 0 else []
+    return jsonify(json_list=match) 
 
 def get_neighbors(graph, name = None, n_neighbours = 20):
     if name is None:
@@ -56,8 +66,8 @@ def index():
 def neighbors():
     form = NameForm()
     if form.validate_on_submit():
-        name1 = re.sub(' ', '_', form.name1.data)
-        name2 = re.sub(' ', '_', form.name2.data)
+        name1 = re.sub(' +', '_', form.name1.data)
+        name2 = re.sub(' +', '_', form.name2.data)
         if name2 == '':
             neighbors = get_neighbors(graph, name1).records
             if len(neighbors) == 0:
@@ -97,8 +107,8 @@ def neighbors_result():
 def path():
     form = PathForm()
     if form.validate_on_submit():
-        name1 = re.sub(' ', '_', form.name1.data)
-        name2 = re.sub(' ', '_', form.name2.data)
+        name1 = re.sub(' +', '_', form.name1.data)
+        name2 = re.sub(' +', '_', form.name2.data)
         path = get_path(graph, name1, name2).records
         if len(path) == 0:
             flash(Markup('Path not found!'))
