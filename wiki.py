@@ -9,6 +9,7 @@ from wtforms.validators import Required
 from py2neo import authenticate, Graph
 from datetime import timedelta
 import re
+from flask_bootstrap import WebCDN
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -16,6 +17,9 @@ app.config['SECRET_KEY'] = 'hard to guess string'
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+
+
+app.extensions['bootstrap']['cdns']['jquery'] = WebCDN('//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/')
 
 neo4j_user = os.environ.get('NEO4J_USER') or 'neo4j'
 neo4j_pass = os.environ.get('NEO4J_PASS') or 'neo4j'
