@@ -5,39 +5,50 @@
 {% block title %}Wikigraph{% endblock %}
 
 {% block page_content %}
-<div class="container">
-    <div class="jumbotron">
-        {% if is_neighbors %}
-            <h2>{{macros.wiki_external_link(root)}}</h2>
-        {% else %}
-        <h2>{{macros.wiki_external_link(path[0])}} &#8594; {{macros.wiki_external_link(path[-1])}} </h2>
-        {% endif %}
-    </div>
+<div class="page-header">
+    {% if is_neighbors %}
+    <h2>{{macros.wiki_external_link(root)}}</h2>
+    {% else %}
+    <h2>{{macros.wiki_external_link(path[0])}} &#8594; {{macros.wiki_external_link(path[-1])}} </h2>
+    {% endif %}
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            {% if is_neighbors %}
-                <th>Neighbors</th>
-            {% else %}
-                <th>One Shortest Path</th>
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% if is_neighbors %}
-        {% for neighbor in neighbors %}
-        <tr>
-            <td><a href="{{ ''.join(['https://en.wikipedia.org/wiki/', neighbor]) }}">{{ neighbor }}</a></td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        {% for node in path %}
-        <tr>
-            <td><a href="{{ ''.join(['https://en.wikipedia.org/wiki/', node]) }}">{{ node }}</a></td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-    </tbody>
-</table>
+
+<style type="text/css">
+#container {
+    height: 400px;
+    margin: auto;
+}
+</style>
+
+<div id="container"></div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+s = new sigma({
+    graph: {{graph|safe}},
+    renderer: {
+        container: 'container', 
+    },
+    settings: {
+        defaultNodeColor: '#ec5148',
+        defaultEdgeColor: 'grey',
+    }
+});
+s.startForceAtlas2({worker: true, barnesHutOptimize: true});
+setTimeout(function() { s.stopForceAtlas2(); }, 3000);
+
+// Bind the events:
+s.bind('clickNode doubleClickNode rightClickNode', function(e) {
+    var win = window.open('https://en.wikipedia.org/wiki/' + e.data.node.label, '_blank');
+    if(win){
+        //Browser has allowed it to be opened
+        win.focus();
+    }else{
+        //Broswer has blocked it
+        alert('Please allow popups for this site');
+    }
+});
+
+</script>
 {% endblock %}
