@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Wikigraph{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Graph</h1>
+</div>
+<style type="text/css">
+  #container {
+    max-width: 400px;
+    height: 400px;
+    margin: auto;
+  }
+</style>
+<div id="container"></div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="{{url_for('static', filename = 'js/lib/sigma.js/sigma.min.js')}}"></script>
+<script src="{{url_for('static', filename = 'js/lib/sigma.js/plugins/sigma.parsers.json.min.js')}}"></script>
+<script>
+sigma.parsers.json("{{url_for('static', filename='data/data.json')}}", {
+    container: 'container',
+    settings: {
+      defaultNodeColor: '#ec5148'
+    }
+  });
+</script>
+{% endblock %}

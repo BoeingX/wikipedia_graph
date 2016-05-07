@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, session, redirect, url_for, flash, Markup, jsonify, session, app, request
+import re
+from flask import Flask, render_template, session, redirect, url_for, flash, Markup, jsonify, app, request
 from flask.ext.script import Manager, Shell
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
@@ -8,7 +9,6 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from py2neo import authenticate, Graph
 from datetime import timedelta
-import re
 from flask_bootstrap import WebCDN
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -123,6 +123,10 @@ def path():
 @app.route('/d3', methods = ['GET'])
 def d3():
     return render_template('d3.html')
+
+@app.route('/graph', methods = ['GET'])
+def graph():
+    return render_template('graph.html')
 
 if __name__ == '__main__':
     manager.run()
