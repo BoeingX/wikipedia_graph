@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from flask import Flask, render_template, session, redirect, url_for, flash, Markup, jsonify, app, request
 from flask.ext.script import Manager, Shell
 from flask.ext.bootstrap import Bootstrap
@@ -62,6 +63,11 @@ def internal_server_error(e):
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
+
+@app.route('/search', methods = ['GET'])
+def search():
+    name1 = request.args.get('name1')
+    name2 = request.args.get('name2')
 
 @app.route('/neighbors', methods=['GET', 'POST'])
 def neighbors():
@@ -126,7 +132,10 @@ def d3():
 
 @app.route('/graph', methods = ['GET'])
 def graph():
-    return render_template('graph.html')
+    with open('static/data/data.json') as data_file:    
+        data = json.load(data_file)
+    print data['edges']
+    return render_template('graph.html', data = jsonify(data))
 
 if __name__ == '__main__':
     manager.run()
