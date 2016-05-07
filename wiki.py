@@ -28,6 +28,10 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 app.extensions['bootstrap']['cdns']['jquery'] = WebCDN('//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/')
 
+class NameForm(Form):
+    name1 = StringField('First page (e.g. Hidden Markov model)?', validators=[Required()])
+    name2 = StringField('Second page (e.g. Support vector machine)?', validators = [])
+    submit = SubmitField('Submit')
 
 @app.route('/autocomplete',methods=['GET'])
 def autocomplete():
@@ -39,7 +43,7 @@ def autocomplete():
 
 def get_neighbors(graph, name = None, n_neighbors = 20):
     if name is None:
-        results = cypher.execute("START (p:Article) MATCH (p:Article)-[:TO_ARTICLE]->(q:Article) RETURN p.name as root, q.name as name LIMIT %d" % n_neighbors).records
+        results = cypher.execute("MATCH (p:Article)-[:TO_ARTICLE]->(q:Article) RETURN p, q SKIP %d LIMIT %d" % (random.randint(0, 1e6), n_neighbors)).records
     else:
         results = cypher.execute("MATCH (p:Article)-[:TO_ARTICLE]->(q:Article) WHERE p.name =~ '(?i)%s' RETURN p, q LIMIT %d" % (name, n_neighbors)).records
     if len(results) == 0:
@@ -47,22 +51,34 @@ def get_neighbors(graph, name = None, n_neighbors = 20):
     g = {}
     g['nodes'] = []
     g['edges'] = []
+    nodes = set()
     for idx in range(len(results)):
         tmp = results[idx]
-        if idx == 0:
+        if tmp.p['pageid'] not in nodes:
             g['nodes'].append({'id': tmp.p['pageid'], 'label': tmp.p['name'], 'x': random.random()*10, 'y': random.random()*10, 'size': 1})
-        g['nodes'].append({'id': tmp.q['pageid'], 'label': tmp.q['name'], 'x': random.random()*10, 'y': random.random()*10, 'size': 1})
+            nodes.add(tmp.p['pageid'])
+        if tmp.q['pageid'] not in nodes:
+            g['nodes'].append({'id': tmp.q['pageid'], 'label': tmp.q['name'], 'x': random.random()*10, 'y': random.random()*10, 'size': 1})
+            nodes.add(tmp.q['pageid'])
         g['edges'].append({'id': str(idx), 'source': tmp.p['pageid'], 'target': tmp.q['pageid']})
     return g
 
 def get_path(graph, name1, name2, depth = 5):
-    result = cypher.execute("MATCH s = shortestPath((p:Article)-[:TO_ARTICLE*1..%d]->(q:Article)) WHERE p.name =~ '(?i)%s' and q.name =~ '(?i)%s' RETURN s as path LIMIT 1" % (depth, name1, name2))
-    return result
-
-class NameForm(Form):
-    name1 = StringField('First page (e.g. Hidden Markov model)?', validators=[Required()])
-    name2 = StringField('Second page (e.g. Support vector machine)?', validators = [])
-    submit = SubmitField('Submit')
+    result = cypher.execute("MATCH s = shortestPath((p:Article)-[:TO_ARTICLE*1..%d]->(q:Article)) WHERE p.name =~ '(?i)%s' and q.name =~ '(?i)%s' RETURN s as path LIMIT 1" % (depth, name1, name2)).records
+    if len(result) == 0:
+        return None
+    result = result[0].path.nodes
+    g = {}
+    g['nodes'] = []
+    g['edges'] = []
+    for idx in range(len(result)):
+        tmp = result[idx]
+        if idx == 0:
+            g['nodes'].append({'id': tmp['pageid'], 'label': tmp['name'], 'x': idx, 'y': random.random()*10, 'size': 1})
+        else:
+            g['nodes'].append({'id': tmp['pageid'], 'label': tmp['name'], 'x': idx, 'y': random.random()*10, 'size': 1})
+            g['edges'].append({'id': str(idx), 'source': result[idx-1]['pageid'], 'target': tmp['pageid']})
+    return g
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -74,12 +90,8 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
-
-@app.route('/search', methods = ['GET'])
-def search():
-    name1 = request.args.get('name1')
-    name2 = request.args.get('name2')
+    g = get_neighbors(graph, name = None, n_neighbors = 100)
+    return render_template('neighbors_result.html', graph = json.dumps(g))
 
 @app.route('/neighbors', methods=['GET', 'POST'])
 def neighbors():
@@ -89,73 +101,26 @@ def neighbors():
         name2 = re.sub(' +', '_', form.name2.data)
         if name2 == '':
             g = get_neighbors(graph, name1)
-            if graph is None:
+            if g is None:
                 flash(Markup('Root node not found!'))
                 return redirect(url_for('neighbors'))
             else:
-                session['is_neighbors'] = True
-                session['root'] = g['nodes'][0]['label']
                 session['graph'] = g
                 return redirect(url_for('neighbors_result'))
-        #else:
-        #    path = get_path(graph, name1, name2).records
-        #    if len(path) == 0:
-        #        flash(Markup('Path not found!'))
-        #        return redirect(url_for('neighbors'))
-        #    else:
-        #        session['is_neighbors'] = False
-        #        session['path'] = [node['name'] for node in path[0].path.nodes]
-        #        return redirect(url_for('neighbors_result'))
+        else:
+            g = get_path(graph, name1, name2)
+            if g is None:
+                flash(Markup('Path not found!'))
+                return redirect(url_for('neighbors'))
+            else:
+                session['graph'] = g
+                return redirect(url_for('neighbors_result'))
     return render_template('neighbors.html', form = form)
 
 @app.route('/neighbors_result')
 def neighbors_result():
-    is_neighbors = session.get('is_neighbors')
-    root = session.get('root')
     g = session.get('graph')
-    if is_neighbors:
-        if root is None or neighbors is None:
-            return render_template('404.html'), 404
-    #else:
-    #    if path is None:
-    #        return render_template('404.html'), 404
-    return render_template('neighbors_result.html', is_neighbors = is_neighbors, root = root, graph = json.dumps(g))
-
-@app.route('/path', methods=['GET', 'POST'])
-def path():
-    form = PathForm()
-    if form.validate_on_submit():
-        name1 = re.sub(' +', '_', form.name1.data)
-        name2 = re.sub(' +', '_', form.name2.data)
-        path = get_path(graph, name1, name2).records
-        if len(path) == 0:
-            flash(Markup('Path not found!'))
-            return render_template('neighbors.html', form = form)
-        else:
-            path = [node['name'] for node in path[0].path.nodes]
-            print path
-            return redirect(url_for('index'))
-    return render_template('neighbors.html', form = form)
-
-@app.route('/d3', methods = ['GET'])
-def d3():
-    return render_template('d3.html')
-
-@app.route('/graph', methods = ['GET'])
-def graph():
-    with open('static/data/data.json') as data_file:    
-        data = json.load(data_file)
-    print data.keys()
-    return render_template('graph.html', data = json.dumps(data))
-@app.route('/_add_numbers')
-def add_numbers():
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    return jsonify(result=a + b)
-
-@app.route('/test')
-def test():
-    return render_template('test.html')
+    return render_template('neighbors_result.html', graph = json.dumps(g))
 
 if __name__ == '__main__':
     manager.run()

@@ -4,7 +4,33 @@
 {% block title %}Wikigraph{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>Hello World!</h1>
+<div id="container">
+    <style>
+        #graph-container {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+        }
+    </style>
+    <div id="graph-container"></div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script type="application/javascript">
+sigma.settings.defaultNodeColor = '#ec5148';
+sigma.neo4j.cypher(
+        { url: 'http://localhost:7474', user: 'neo4j', password: 'sxhsby' },
+        'MATCH (n) OPTIONAL MATCH (n)-[r]->(m) RETURN n,r,m LIMIT 1000',
+        { container: 'graph-container',
+        } ,
+        function(s) {
+            console.log('Number of nodes :'+ s.graph.nodes().length);
+            console.log('Number of edges :'+ s.graph.edges().length);
+        }
+        );
+</script>
 {% endblock %}
